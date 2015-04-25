@@ -89,8 +89,8 @@ def main(prog=None, program=None):
         stderr.write("Login was not successful!\n")
         return 2
     if program is None:
-        stderr.write("Type program id or url: ")
-        program = input("Type program id or url: ")
+        stderr.write("No program id given. Type program id or url: ")
+        program = input()
     programid = get_programid(program)
     if programid is None:
         stderr.write("Invalid program id or url!\n")

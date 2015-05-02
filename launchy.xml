@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurations xmlns="http://launchy.mozdev.org/configurations">
+    <application>
+        <label>Katso Elisa Viihteestä</label>
+        <type>3</type>
+        <command>/usr/local/bin/elisa_katso.sh</command>
+    </application>
+</configurations>

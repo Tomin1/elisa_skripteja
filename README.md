@@ -1,8 +1,8 @@
 Elisa Viihde -skriptejä
 =======================
-Erilaisia skriptejä Elisa Viihteen käyttöön. Laita kaikki skriptit `/usr/local/bin`-hakemistoon ja anna niille suoritusoikeudet (`chmod +x`). 
+Erilaisia skriptejä Elisa Viihteen käyttöön. Laita kaikki skriptit `/usr/local/bin`-hakemistoon ja anna niille suoritusoikeudet (`chmod +x`). Lisäksi muokkaa Elisa Viihteen tunnuksesi `elisa_url.py`-tiedostoon. 
 
-`elisa_url.py` on Python-skripti, joka hakee videotiedoston url-osoitteen annetun sivun url-osoitteen perusteella. Sitä käytetään yleensä osana jotain muuta skriptiä, kuten tässä olevat bash-skriptit.
+`elisa_url.py` on Python-skripti, joka hakee videotiedoston url-osoitteen annetun sivun url-osoitteen perusteella. Sitä käytetään yleensä osana jotain muuta skriptiä, kuten tässä olevat bash-skriptit. 
 
 `elisa_latain.sh` on bash-skripti, joka lataa videon annetun URL-osoitteen perusteella annettuun hakemistoon käyttäen `elisa_url.py`:tä ja `wget`:iä. Sitä käytetään antamalla toiseksi viimeiseksi parametriksi videon sivun osoite ja viimeiseksi kohdetiedosto. Muut parametrit annetaan suoraan `wget`:lle. 
 

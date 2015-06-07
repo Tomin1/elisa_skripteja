@@ -2,7 +2,8 @@
 # Public domain
 # Requires: elisa_url.py, vlc, wget
 # Recommends: inotifywait (inotify-tools)
-# Use: elisa_katso.sh url_of_the_video_page_in_elisa_viihde
+# Use: elisa_katso.sh [arguments_to_wget] \
+#          url_of_the_video_page_in_elisa_viihde
 TMP_FILE="/tmp/elisa-viihde-$$.mpg"
 #TMP_FILE="$HOME/.cache/elisa-viihde-$$.mpg"
 URL=$(elisa_url.py "${@: -1}")

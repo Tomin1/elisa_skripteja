@@ -96,6 +96,11 @@ def main(prog=None, program=None):
         stderr.write("Invalid program id or url!\n")
         return 3
     program_info = get_program_info(creds, programid)
+    if not 'url' in program_info:
+        stderr.write(
+            "Can't find program url! Maybe the recording is not available!\n"
+        )
+        return 4
     print(program_info['url'], end='')
     return 0
 

@@ -100,5 +100,5 @@ def main(prog=None, program=None):
     return 0
 
 if __name__ == '__main__':
-    from sys import argv
-    main(*argv)
+    import sys
+    sys.exit(main(*sys.argv))

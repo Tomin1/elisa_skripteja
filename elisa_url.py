@@ -27,6 +27,7 @@ from urllib.request import urlopen, build_opener, HTTPCookieProcessor
 from urllib.parse import urlencode, urlparse, parse_qsl
 from json import loads as json_loads
 from re import compile as re_compile
+from argparse import ArgumentParser
 
 USERNAME='laita käyttäjä tähän'
 PASSWORD='laita salasana tähän'
@@ -39,6 +40,9 @@ PROGRAM_VIDEO_PAGE_REGEX = re_compile(
 )
 PROGRAM_INFO_PAGE_REGEX = re_compile(
     r"https?://elisaviihde.fi/ohjelmaopas/ohjelma/(?P<id>\d+)"
+)
+DIR_PAGE_REGEX = re_compile(
+        r"https?://elisaviihde.fi/tallenteet/kansio/(?P<id>\d+)(?:/sivu/\d+)?"
 )
 
 def login(username, password):
@@ -69,6 +73,18 @@ def get_programid(string):
         return None
     return int(m.group("id"))
 
+def get_dirid(string):
+    try:
+        value = int(string)
+    except ValueError:
+        pass
+    else:
+        return value
+    m = DIR_PAGE_REGEX.match(string)
+    if m is None:
+        return None
+    return int(m.group("id"))
+
 def get_program_info(login, programid):
     opener = build_opener(HTTPCookieProcessor(login))
     response = opener.open(PROGRAM_INFO_URL, data=urlencode({
@@ -82,26 +98,53 @@ def get_program_info(login, programid):
         return None
     return data
 
-def main(prog=None, program=None):
+def main(prog, *arguments):
     from sys import stderr
+    parser = ArgumentParser(prog=prog,
+            description="Fetches video urls from Elisa Viihde.", epilog="""
+You can use arguments -u, -d, -c and -t to choose what information is returned
+and in which order. The default is to print only urls.""")
+    parser.add_argument('program', nargs='?', help="program id or url")
+    parser.add_argument('-D', '--dir', dest='directory', action='store_true',
+            help="""given id or url is for a directory,
+returns urls for all videos in the directory""")
+    parser.add_argument('-u', '--url', dest='parts', action='append_const',
+            const='url', help="print video download url")
+    parser.add_argument('-d', '--desc', dest='parts', action='append_const',
+            const='description', help="print description")
+    parser.add_argument('-c', '--channel', dest='parts', action='append_const',
+            const='channel', help="print channel name")
+    parser.add_argument('-t', '--time', dest='parts', action='append_const',
+            const='time', help="print date and time, ISO format")
+    args = parser.parse_args(arguments)
     creds = login(USERNAME, PASSWORD)
     if creds is None:
         stderr.write("Login was not successful!\n")
         return 2
-    if program is None:
+    if args.program is not None:
+        program = args.program
+    else:
         stderr.write("No program id given. Type program id or url: ")
         program = input()
-    programid = get_programid(program)
-    if programid is None:
-        stderr.write("Invalid program id or url!\n")
-        return 3
-    program_info = get_program_info(creds, programid)
-    if not 'url' in program_info:
-        stderr.write(
-            "Can't find program url! Maybe the recording is not available!\n"
-        )
-        return 4
-    print(program_info['url'], end='')
+
+    if args.directory:
+        dirid = get_dirid(program)
+        if dirid is None:
+            stderr.write("Invalid directory id or url!\n")
+            return 3
+        raise NotImplementedError("Listing directories is not implemented yet!")
+    else:
+        programid = get_programid(program)
+        if programid is None:
+            stderr.write("Invalid program id or url!\n")
+            return 3
+        program_info = get_program_info(creds, programid)
+        if not 'url' in program_info:
+            stderr.write(
+                "Can't find program url! Maybe the recording is not available!\n"
+            )
+            return 4
+        print(program_info['url'], end='')
     return 0
 
 if __name__ == '__main__':

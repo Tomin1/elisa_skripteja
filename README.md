@@ -13,4 +13,4 @@ Erilaisia skriptejä Elisa Viihteen käyttöön. Laita kaikki skriptit `/usr/loc
 elisaviihde.py
 --------------
 `elisa_url.py` tarvitsee toimiakseen `elisaviihde.py` -kirjaston, joka on python3-yhteensopiva. Voit ladata sen githubista:
-https://github.com/Tomin1/elisaviihde/raw/master/elisaviihde.py
+https://github.com/Tomin1/elisaviihde/raw/python3/elisaviihde.py

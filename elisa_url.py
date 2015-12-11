@@ -104,7 +104,48 @@ returns urls for all videos in the directory""")
         if dirid is None:
             stderr.write("Invalid directory id or url!\n")
             return 3
-        raise NotImplementedError("Listing directories is not implemented yet!")
+        progs = []
+        page = 1
+        new_progs = ["new"]
+        while len(new_progs) > 0:
+            try:
+                new_progs = elisaviihde.getrecordings(dirid, page)
+            except Exception:
+                stderr.write(
+"Could not fetch recordings! The id or url might be invalid!"
+                )
+                if args.debug:
+                    stderr.write("Exception: {} \n".format(str(error)))
+                return 4
+            progs.extend(new_progs)
+            page += 1
+        if args.parts is None:
+            args.parts = ['id']
+        for prog in progs:
+            for part in args.parts:
+                if part == 'url':
+                    try:
+                        url = elisaviihde.getstreamuri(prog['programId'])
+                    except Exception as error:
+                        stderr.write(""""Can't get program url for id {}! \
+Maybe the recording is not available!\n""".format(prog["programId"]))
+                        if args.debug:
+                            stderr.write("Exception: {} \n".format(str(error)))
+                    else:
+                        print('"' + url + '"', end='')
+                elif part == 'id':
+                    print(prog['programId'], end='')
+                elif part == 'description':
+                    if 'description' in prog:
+                        print('"' + prog['description'] + '"', end='')
+                    else:
+                        print('""', end='')
+                elif part == 'channel':
+                    print('"' + prog['channel'] + '"', end='')
+                elif part == 'time':
+                    print('"' + prog['startTime'] + '"', end='')
+                print(" ", end='')
+            print()
     else:
         programid = get_programid(program)
         if programid is None:

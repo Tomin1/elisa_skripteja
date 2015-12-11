@@ -110,12 +110,16 @@ and in which order. The default is to print only urls.""")
 returns urls for all videos in the directory""")
     parser.add_argument('-u', '--url', dest='parts', action='append_const',
             const='url', help="print video download url")
+    parser.add_argument('-i', '--id', dest='parts', action='append_const',
+            const='id', help="print program id")
     parser.add_argument('-d', '--desc', dest='parts', action='append_const',
             const='description', help="print description")
     parser.add_argument('-c', '--channel', dest='parts', action='append_const',
             const='channel', help="print channel name")
     parser.add_argument('-t', '--time', dest='parts', action='append_const',
-            const='time', help="print date and time, ISO format")
+            const='time', help="print date and time")
+    parser.add_argument('--debug', default=False, action='store_true',
+            help="print debug information")
     args = parser.parse_args(arguments)
     creds = login(USERNAME, PASSWORD)
     if creds is None:

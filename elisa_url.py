@@ -22,19 +22,13 @@
 # THE SOFTWARE.
 # 
 
-from http.cookiejar import CookieJar
-from urllib.request import urlopen, build_opener, HTTPCookieProcessor
-from urllib.parse import urlencode, urlparse, parse_qsl
-from json import loads as json_loads
+from elisaviihde import elisaviihde as ElisaViihde
 from re import compile as re_compile
 from argparse import ArgumentParser
 
 USERNAME='laita käyttäjä tähän'
 PASSWORD='laita salasana tähän'
 
-BASE_URL = "http://api.elisaviihde.fi/etvrecorder/"
-LOGIN_URL = BASE_URL + "login.sl"
-PROGRAM_INFO_URL = BASE_URL + "program.sl"
 PROGRAM_VIDEO_PAGE_REGEX = re_compile(
     r"https?://elisaviihde.fi/tallenteet/katso/(?P<id>\d+)"
 )
@@ -44,20 +38,6 @@ PROGRAM_INFO_PAGE_REGEX = re_compile(
 DIR_PAGE_REGEX = re_compile(
         r"https?://elisaviihde.fi/tallenteet/kansio/(?P<id>\d+)(?:/sivu/\d+)?"
 )
-
-def login(username, password):
-    cookies = CookieJar()
-    opener = build_opener(HTTPCookieProcessor(cookies))
-    response = opener.open(LOGIN_URL, data=urlencode({
-            'username': username, 
-            'password': password, 
-            'savelogin': None, 
-            'ajax': True, 
-        }).encode('utf-8')
-    )
-    if response.read() != b"TRUE":
-        return None
-    return cookies
 
 def get_programid(string):
     try:
@@ -85,19 +65,6 @@ def get_dirid(string):
         return None
     return int(m.group("id"))
 
-def get_program_info(login, programid):
-    opener = build_opener(HTTPCookieProcessor(login))
-    response = opener.open(PROGRAM_INFO_URL, data=urlencode({
-            'programid': programid, 
-            'ajax': True, 
-        }).encode('utf-8')
-    )
-    try:
-        data = json_loads(response.read().decode('utf-8'))
-    except ValueError:
-        return None
-    return data
-
 def main(prog, *arguments):
     from sys import stderr
     parser = ArgumentParser(prog=prog,
@@ -121,8 +88,9 @@ returns urls for all videos in the directory""")
     parser.add_argument('--debug', default=False, action='store_true',
             help="print debug information")
     args = parser.parse_args(arguments)
-    creds = login(USERNAME, PASSWORD)
-    if creds is None:
+    elisaviihde = ElisaViihde(args.debug)
+    elisaviihde.login(USERNAME, PASSWORD)
+    if not elisaviihde.islogged():
         stderr.write("Login was not successful!\n")
         return 2
     if args.program is not None:
@@ -142,13 +110,16 @@ returns urls for all videos in the directory""")
         if programid is None:
             stderr.write("Invalid program id or url!\n")
             return 3
-        program_info = get_program_info(creds, programid)
-        if not 'url' in program_info:
+        try:
+            programurl = elisaviihde.getstreamuri(programid)
+        except Exception as error:
             stderr.write(
-                "Can't find program url! Maybe the recording is not available!\n"
+                "Can't get program url! Maybe the recording is not available!\n"
             )
+            if args.debug:
+                stderr.write("Exception: {} \n".format(str(error)))
             return 4
-        print(program_info['url'], end='')
+        print(programurl, end='')
     return 0
 
 if __name__ == '__main__':

@@ -105,7 +105,7 @@ returns urls for all videos in the directory""")
             stderr.write("Invalid directory id or url!\n")
             return 3
         progs = []
-        page = 1
+        page = 0
         new_progs = ["new"]
         while len(new_progs) > 0:
             try:

@@ -12,8 +12,8 @@ if [ "$?" -ne "0" ]; then
     echo "Ei voitu hakea osoitetta videolle!"
     exit 2
 fi
-if [ -n "$(which inotifywait 2> /dev/null)" && \
-        -n "$(inotifywait --help |grep include)" ]; then
+if [[ -n "$(which inotifywait 2> /dev/null)" && \
+        -n "$(inotifywait --help |grep include)" ]]; then
     sh -c "inotifywait -e create --include $TMP_FILE ${TMP_FILE%/*} \
         && vlc $TMP_FILE" &
     sleep 1

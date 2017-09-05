@@ -20,5 +20,5 @@ if [[ -n "$(which inotifywait 2> /dev/null)" && \
 else
     sh -c "sleep 10 && vlc $TMP_FILE" &
 fi
-wget ${@: 1:${#@}-1} -O "$TMP_FILE" "$URL"
+wget --user-agent=Mozilla ${@: 1:${#@}-1} -O "$TMP_FILE" "$URL"
 wait && rm "$TMP_FILE"

@@ -8,4 +8,4 @@ if [ "$?" -ne "0" ]; then
     echo "Ei voitu hakea osoitetta videolle!"
     exit 2
 fi
-wget ${@: 1:${#@}-2} -O "${@: -1}" "$URL"
+wget --user-agent=Mozilla ${@: 1:${#@}-2} -O "${@: -1}" "$URL"

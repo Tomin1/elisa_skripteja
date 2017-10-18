@@ -31,7 +31,7 @@ from re import compile as re_compile
 USERNAME='laita käyttäjä tähän'
 PASSWORD='laita salasana tähän'
 
-BASE_URL = "http://api.elisaviihde.fi/etvrecorder/"
+BASE_URL = "https://api.elisaviihde.fi/etvrecorder/"
 LOGIN_URL = BASE_URL + "login.sl"
 PROGRAM_INFO_URL = BASE_URL + "program.sl"
 PROGRAM_VIDEO_PAGE_REGEX = re_compile(
